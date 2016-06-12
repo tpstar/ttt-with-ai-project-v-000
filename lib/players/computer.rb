@@ -132,7 +132,7 @@ class Computer < Player
 
   def move(board_cells)
     @board_cells = board_cells
-    sleep 1
+    #sleep 1
     if winning_array_index
       return winning_position
     elsif blocking_array_index

@@ -89,7 +89,78 @@ class Game
     elsif draw?
       puts "Cats Game!"
     end
+    pick_play_mode
   end
+
+  def pick_play_mode
+    puts "Welcome to TicTacToe"
+    puts "Please enter a number of players (0-2)"
+    input = gets.strip
+    if input.to_i.between?(0, 2)
+      case input
+      when "0"
+        puts "Wargame? y/n"
+        wg_input = gets.strip.downcase
+        if wg_input == "n"
+          game = Game.new(player_1 = Computer.new("X"), player_2 = Computer.new("O"), board = Board.new)
+        elsif wg_input == "y"
+          wargame
+        else
+          puts "Wargame? y/n" #work on this
+        end
+
+      when "1"
+        puts "Do you want to go first? (y, n)"
+        yes_no = gets.strip
+        if yes_no == "y"
+          game = Game.new(player_1 = Human.new("X"), player_2 = Computer.new("O"), board = Board.new)
+        elsif yes_no == "n"
+          game = Game.new(player_1 = Computer.new("X"), player_2 = Human.new("O"), board = Board.new)
+        end
+
+      when "2"
+        game = Game.new
+
+      when "exit"
+        exit
+
+      end
+
+    else
+      puts "An invalid number of players. Please pick a number again (0-2)"
+      pick_play_mode
+    end
+    game.play
+  end
+
+  def wargame
+    100.times do
+      Game.new(player_1 = Computer.new("X"), player_2 = Computer.new("O"), board = Board.new).wargame_play
+    end
+    puts "X won #{@x_win} %, O won #{@o_won} %, and #{@draw} % of the matches were a draw."
+  end
+
+  def wargame_play
+    #board.display
+    @x_win = 0
+    @o_win = 0
+    @draw = 0
+    turn until over?
+    if won?
+      if winner == "X"
+        @x_win +=1
+        puts "Congratulations X!"
+      elsif winner == "O"
+        @o_win +=1
+        puts "Congratulations O!"
+      end
+    elsif draw?
+      @draw +=1
+      puts "Cats Game!"
+    end
+    #pick_play_mode
+  end
+
 
 end
 # binding.pry
