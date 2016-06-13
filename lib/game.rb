@@ -17,7 +17,7 @@ class Game
   def initialize(player_1 = Human.new("X"), player_2 = Human.new("O"), board = Board.new)
     @player_1 = player_1
     @player_2 = player_2
-    @board = board if board 
+    @board = board if board
   end
 
   def start
@@ -51,36 +51,34 @@ class Game
       puts "Wargames simulation? y or n"
       @war_mode = gets.strip.downcase
       if @war_mode == "y"
-        # player_1_wins = 0
-        # player_2_wins = 0
-        # draw = 0
+        player_1_wins = 0
+        player_2_wins = 0
+        draw = 0
 
         100.times do
-          Game.new(Computer.new("X"), Computer.new("O")).play
-          # if @winner == "X"
-          #   player_1_wins += 1
-          # elsif @winner == "O"
-          #   player_2_wins += 1
-          # else
-          #   draw += 1
-          # end
+          game = Game.new(Computer.new("X"), Computer.new("O"))
+          game.play
+          if game.winner == "X"
+            player_1_wins += 1
+          elsif game.winner == "O"
+            player_2_wins += 1
+          elsif game.draw?
+            draw +=1
+          end
         end
-        # puts ""
-        # puts "Player 1 won #{player_1_wins}% of the games."
-        # puts "Player 2 won #{player_2_wins}% of the games."
-        # puts "The outcome was a draw #{draw}% of the games."
-        # puts ""
-        # puts ""
+        puts ""
+        puts "Player 1 won #{player_1_wins}% of the games."
+        puts "Player 2 won #{player_2_wins}% of the games."
+        puts "The outcome was a draw #{draw}% of the games."
+        puts ""
+        puts ""
 
         start
       elsif @war_mode == "n"
         Game.new(Computer.new("X"), Computer.new("O")).play
         start
       end
-      # ask if wargames mode
-      # if y, run 100 games, give data.
-      # if n, run 1 game computer vs computer.  Delay on turn?
-    when "exit"
+      when "exit"
       exit
     else
       puts "enter a valid response"

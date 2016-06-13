@@ -3,11 +3,11 @@ class Computer < Player
 
   def move(board) # we need to pass in the actual game board instance
   #  binding.pry
-    if @token == "X" && board.turn_count == 0
-      ["1", "3", "7", "9"].sample
-    else
-      ["1", "2", "3", "4", "5", "6", "7", "8", "9"].sample
-    end
+    # if @token == "X" && game.board.turn_count == 0
+    #   ["1", "3", "7", "9"].sample
+    # else
+     ["1", "2", "3", "4", "5", "6", "7", "8", "9"].sample #shit's random yo 
+    # end
   end
 
 end
