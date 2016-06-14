@@ -3,30 +3,34 @@ class Computer < Player
 
   def move(board) # we need to pass in the actual game board instance
   #
-      player_moves = available_moves(board)
+    player_moves = available_moves(board)
+    if check_winning_move(board)
+      y = make_winning_move(board)
+      puts "WINNER"
+      y
+    elsif check_blocking_move(board)
+      z = make_blocking_move(board)
+      puts "BLOCKED"
+      z
+  #  elsif
 
-      if check_winning_move(board)
-        y = make_winning_move(board)
-        puts "WINNER"
-        y
-      else
-        x = player_moves.sample
-        puts "RANDOM"
-        x
-      end
+    else
+      x = player_moves.sample
+      puts "RANDOM"
+      x
+    end
   end
 
-  # def current_x_positions(board)
-  #   collect_positions("X", board)
-  # end
-  #
-  # def current_y_positions(board)
-  #   collect_positions("Y", board)
+  # def corners(board)
+  #   if (available_moves(board).include?
+  #     ["1", "3", "7", "9"].sample
+  #   end
   # end
 
   def available_moves(board)
     collect_positions(" ", board)
   end
+
 
   def collect_positions(token_or_empty, board)
     positions = board.cells.each_index.select {|i| board.cells[i] == token_or_empty}
@@ -82,6 +86,15 @@ class Computer < Player
     end
   end
 
+  def check_blocking_move(board)
+    case @token
+    when "X"
+      o_winning_combo(board)
+    when "O"
+      x_winning_combo(board)
+    end
+  end
+
   def find_empty_for_win(board)
     Game::WIN_COMBINATIONS[check_winning_move(board)].index do |c|
       board.cells[c] == " "
@@ -89,7 +102,7 @@ class Computer < Player
   end
 
   def find_empty_for_block(board)
-
+    Game::WIN_COMBINATIONS[check_blocking_move(board)].index {|c| board.cells[c] == " "}
   end
 
 
@@ -97,6 +110,9 @@ class Computer < Player
     (Game::WIN_COMBINATIONS[check_winning_move(board)][find_empty_for_win(board)] + 1).to_s
   end
 
+  def make_blocking_move(board)
+    (Game::WIN_COMBINATIONS[check_blocking_move(board)][find_empty_for_block(board)] + 1).to_s
+  end
 
 end
 

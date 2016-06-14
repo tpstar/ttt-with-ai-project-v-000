@@ -26,45 +26,59 @@ class Game
     puts "2 for a 2-player game mode"
     puts "1 to test yourself against the computer"
     puts "0 to to have the computer play against itself"
-    puts "exit to quit"
+
     game_mode = gets.strip.downcase
-
     case game_mode
-
     when "2"
-      game = Game.new(Human.new("X"), Human.new("O"))
-      game.play
-      start
-
+      two_player_mode
     when "1"
-      puts "Would you like to be Player 1 or Player 2? Enter 1 or 2"
-      player_select = gets.strip.downcase
-      if player_select == "1"
-        game = Game.new(Human.new("X"), Computer.new("O"))
-        game.play
-      elsif player_select == "2"
-        game = Game.new(Computer.new("X"), Human.new("O"))
-        game.play
-      else
-        puts "Enter 1 or 2"
-      end
-
+      one_player_mode
       start
     when "0"
-      puts "Wargames simulation? y or n"
-      @war_mode = gets.strip.downcase
-      if @war_mode == "y"
-        wargames
-        start
-      elsif @war_mode == "n"
-        Game.new(Computer.new("X"), Computer.new("O")).play
-        start
-      end
-      when "exit"
+      computer_mode
+    when "exit"
       exit
     else
-      puts "enter a valid response"
+      puts "Please enter a valid response."
       start
+    end
+  end
+
+  def two_player_mode
+    game = Game.new(Human.new("X"), Human.new("O"))
+    game.play
+    start
+  end
+
+  def computer_mode
+    puts "Wargames simulation? y or n"
+    @war_mode = gets.strip.downcase
+    if @war_mode == "y"
+      wargames
+      start
+    elsif @war_mode == "n"
+      Game.new(Computer.new("X"), Computer.new("O")).play
+      start
+    else
+      computer_mode
+    end
+  end
+
+  def one_player_mode
+    puts "Would you like to be Player 1 or Player 2?"
+
+    player_select = gets.strip.downcase
+    if player_select == "1"
+      puts "Bring it, Human."
+      game = Game.new(Human.new("X"), Computer.new("O"))
+      game.play
+    elsif player_select == "2"
+      puts "You're on, bipedal organic sentient being."
+      game = Game.new(Computer.new("X"), Human.new("O"))
+      game.play
+    else
+      puts "Enter 1 or 2"
+      one_player_mode
     end
   end
 
