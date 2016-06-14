@@ -2,32 +2,106 @@ require 'pry'
 class Computer < Player
 
   def move(board) # we need to pass in the actual game board instance
-  #  binding.pry
-    # if @token == "X" && game.board.turn_count == 0
-    #   ["1", "3", "7", "9"].sample
-    # else
-     ["1", "2", "3", "4", "5", "6", "7", "8", "9"].sample #shit's random yo 
-    # end
+  #
+      player_moves = available_moves(board)
+
+      if check_winning_move(board)
+        y = make_winning_move(board)
+        puts "WINNER"
+        y
+      else
+        x = player_moves.sample
+        puts "RANDOM"
+        x
+      end
   end
+
+  # def current_x_positions(board)
+  #   collect_positions("X", board)
+  # end
+  #
+  # def current_y_positions(board)
+  #   collect_positions("Y", board)
+  # end
+
+  def available_moves(board)
+    collect_positions(" ", board)
+  end
+
+  def collect_positions(token_or_empty, board)
+    positions = board.cells.each_index.select {|i| board.cells[i] == token_or_empty}
+    positions.collect {|x| (x+1).to_s}
+    # return is an array of strings where there are spaces fitting the passed in criteria(token_or_empty)
+  end
+
+  def potential_winning_combo_locations(board)    #wincombo to tokens
+    Game::WIN_COMBINATIONS.collect do |combo|
+  	   combo.collect { |c| c = board.cells[c] }
+  	end
+  end
+
+  def winning_combos_token_counts(board)
+    potential_winning_combo_locations(board).collect do |combo|
+      {
+      nX: combo.count {|c| c == "X" },
+  		nO: combo.count {|c| c == "O" },
+  	  nE: combo.count {|c| c == " " }
+      }
+      #iterate through each winning combination, create a hash with the number of each element in each winning combo.
+      # example:  If player 1 goes in position 4, that hash would read
+      # [{:nX=>0, :nO=>0, :nE=>3},
+      #  {:nX=>1, :nO=>0, :nE=>2},
+      #  {:nX=>0, :nO=>0, :nE=>3},
+      #  {:nX=>1, :nO=>0, :nE=>2},
+      #  {:nX=>0, :nO=>0, :nE=>3},
+      #  {:nX=>0, :nO=>0, :nE=>3},
+      #  {:nX=>0, :nO=>0, :nE=>3},
+      #  {:nX=>0, :nO=>0, :nE=>3}]
+    end
+  end
+
+  def x_winning_combo(board)
+  #  look at the hash.  If there are 2 X's in the hash && an empty space, return that space
+  #  binding.pry
+    winning_combos_token_counts(board).index {|combo| combo[:nX] == 2 && combo[:nE] == 1}
+  end
+
+
+  def o_winning_combo(board)
+  #  look at the hash.  If there are 2 O's in the hash && an empty space, return that space
+  #  binding.pry
+    winning_combos_token_counts(board).index {|combo| combo[:nO] == 2 && combo[:nE] == 1}
+  end
+
+  def check_winning_move(board)
+    case @token
+    when "X"
+      x_winning_combo(board)
+    when "O"
+      o_winning_combo(board)
+    end
+  end
+
+  def find_empty_for_win(board)
+    Game::WIN_COMBINATIONS[check_winning_move(board)].index do |c|
+      board.cells[c] == " "
+    end
+  end
+
+  def find_empty_for_block(board)
+
+  end
+
+
+  def make_winning_move(board)
+    (Game::WIN_COMBINATIONS[check_winning_move(board)][find_empty_for_win(board)] + 1).to_s
+  end
+
 
 end
 
+  # => check for available spaces
 
-# describe 'Player::Computer' do
-#   it 'inherits from Player' do
-#     expect(Player::Computer.ancestors).to include(Player)
-#   end
-#
-#   describe '#move' do
-#     it 'returns a valid position for the computer to move' do
-#       computer = Player::Computer.new("X")
-#       board = Board.new
-#
-#       valid_moves = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-#
-#       computer_move = computer.move(board)
-#
-#       expect(valid_moves).to include(computer_move)
-#     end
-#   end
-# end
+  # => check for potential winning moves
+  # =>  make 100% of winning moves
+  # =>  block potential opponent wins
