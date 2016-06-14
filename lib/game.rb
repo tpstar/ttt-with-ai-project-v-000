@@ -1,3 +1,4 @@
+require 'benchmark'
 require 'pry'
 class Game
 
@@ -51,11 +52,21 @@ class Game
   end
 
   def computer_mode
+    reps = 0
     puts "Wargames simulation? y or n"
     @war_mode = gets.strip.downcase
+
     if @war_mode == "y"
-      wargames
+      puts " "
+      puts "How many simulations?  Enter a number between 1 - 1000:"
+      until reps.between?(1, 100000)
+        reps = gets.strip.to_i
+      end
+      time = Benchmark.realtime {wargames(reps)}
+      puts "Time elapsed #{time} seconds"
+    #  wargames(reps)
       start
+
     elsif @war_mode == "n"
       Game.new(Computer.new("X"), Computer.new("O")).play
       start
@@ -94,26 +105,36 @@ class Game
     board.full? && !won?
   end
 
-  def wargames
+  def wargames(reps)
+    #reps = 1000
+
     player_1_wins = 0
     player_2_wins = 0
     draw = 0
 
-    100.times do
-      game = Game.new(Computer.new("X"), Computer.new("O"))
-      game.play
-      if game.winner == "X"
-        player_1_wins += 1
-      elsif game.winner == "O"
-        player_2_wins += 1
-      elsif game.draw?
-        draw +=1
+    # puts "How many matches would you like to run? Enter a number between 1 and 1,000:"
+    # reps = gets.strip.to_i
+    # if reps.between?(1..1000)
+
+      reps.times do
+        game = Game.new(Computer.new("X"), Computer.new("O"))
+        game.wargames_play
+        if game.winner == "X"
+          player_1_wins += 1
+        elsif game.winner == "O"
+          player_2_wins += 1
+        elsif game.draw?
+          draw +=1
+        end
       end
-    end
-    puts ""
-    puts "Player 1 won #{player_1_wins}% of the games."
-    puts "Player 2 won #{player_2_wins}% of the games."
-    puts "The outcome was a draw #{draw}% of the games."
+
+    p1_percent = player_1_wins * 100.0 / reps
+    p2_percent = player_2_wins * 100.0 / reps
+    draw_percent = draw * 100.0 / reps
+    puts "After #{reps} matches:"
+    puts "Player 1 won #{p1_percent}% of the games."
+    puts "Player 2 won #{p2_percent}% of the games."
+    puts "The outcome was a draw #{draw_percent}% of the games."
     puts ""
     puts ""
   end
@@ -136,20 +157,18 @@ class Game
   end
 
   def turn
-    #board.display
-    # if current_player is of Computer class?
     puts "Please enter a position on the board 1-9:"
     input = current_player.move(board) #pass in the actual game board for #move method
     if board.valid_move?(input)
       board.update(input, current_player)
-      board.display #unless @war_mode == "y"
+      board.display
     else
       turn and return
     end
   end
 
   def play
-    board.display #unless @war_mode == "y"
+    board.display
     until over?
       turn
     end
@@ -162,6 +181,22 @@ class Game
       puts "Cats Game!"
     end
   end
+
+  def wargames_turn
+    input = current_player.move(board)
+    if board.valid_move?(input)
+      board.update(input, current_player)
+    else
+      wargames_turn and return
+    end
+  end
+
+  def wargames_play
+    until over?
+      wargames_turn
+    end
+  end
+
 end
 
 

@@ -4,19 +4,28 @@ class Computer < Player
   def move(board) # we need to pass in the actual game board instance
   #
     player_moves = available_moves(board)
+  #  binding.pry
     if check_winning_move(board)
       y = make_winning_move(board)
-      puts "WINNER"
+    #  puts "WINNER"
       y
     elsif check_blocking_move(board)
       z = make_blocking_move(board)
-      puts "BLOCKED"
+    #  puts "BLOCKED"
       z
-  #  elsif
+    elsif player_moves.count == 9
+      m = "5"
+      #puts "MIDDLE"
+      m
+    elsif player_moves.count == 8
+      c = ["1", "3", "7", "9"].sample
+    #  puts "CORNER"
+      c
+  #  elsif player_moves.count == 7
 
     else
       x = player_moves.sample
-      puts "RANDOM"
+    #  puts "RANDOM"
       x
     end
   end
@@ -38,8 +47,9 @@ class Computer < Player
     # return is an array of strings where there are spaces fitting the passed in criteria(token_or_empty)
   end
 
-  def potential_winning_combo_locations(board)    #wincombo to tokens
+  def potential_winning_combo_locations(board)    #wincombo to tokens - returns a winning combination as an array of tokens or spaces
     Game::WIN_COMBINATIONS.collect do |combo|
+      #binding.pry
   	   combo.collect { |c| c = board.cells[c] }
   	end
   end
